@@ -14,6 +14,8 @@
 - **Çalışma kuralları:** (1) Adım adım ilerle, her adım sonunda onay iste. (2) Önce yerelde çalıştır+doğrula, sonra Kaggle sürümü ver. (3) **Git'i kullanıcı yapar — Claude git komutu çalıştırmaz**, sadece sıralı komutları yazar. (4) Path/parametreler hep `config.yaml`'dan.
 - **Ortam:** Python 3.10, yerel veri `data/raw/` (git dışı), örnek `data/sample/bart_sample.csv` (1.12M satır). Tam eğitim Kaggle'da (`environment: kaggle`, `use_sample: false`).
 - **GitHub:** `bay-area-transit-ridership-forecasting` (MIT).
+- **Kaggle stratejisi (kilitli):** GitHub'dan `git clone` + `sys.path` → modüler `src/` import. GPU = notebook'ta Accelerator toggle + Adım 4'te LightGBM `device: gpu`. Adım adım rehber: **`KAGGLE_GUIDE.md`** (clone/GPU adımları hazır; eğitim hücreleri Adım 4'te dolacak).
+- **Adım 4'te yapılacak küçük iş:** `config.py`'ye `BART_ENV` env-var override ekle (Kaggle'da config.yaml elle düzenlemeden `kaggle` ortamına geçiş için).
 
 ---
 
