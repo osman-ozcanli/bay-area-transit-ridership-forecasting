@@ -24,8 +24,8 @@
 | Adım | Başlık | Durum |
 |------|--------|-------|
 | 0 | Yol haritası + PROGRESS.md | ✅ Tamamlandı |
-| 1 | Proje iskeleti + repo hijyeni | ⏳ Onay bekliyor |
-| 2 | Gerçek veriden örneklem + veri yükleme modülü (`src/data`) | ⬜ Planlandı |
+| 1 | Proje iskeleti + repo hijyeni | ✅ Tamamlandı |
+| 2 | Gerçek veriden örneklem + veri yükleme modülü (`src/data`) | ⏳ Onay bekliyor |
 | 3 | Feature engineering modülü (`src/features`) | ⬜ Planlandı |
 | 4 | Temporal split + model eğitim modülü (`src/models`) | ⬜ Planlandı |
 | 5 | Değerlendirme + yorumlama | ⬜ Planlandı |
@@ -69,4 +69,15 @@
 ### ✅ Adım 0 — Yol haritası (2026-06-04)
 - Notebook ve analiz incelendi, analizdeki tüm kritik tespitler kod üzerinde **doğrulandı**.
 - Hedef mimari/veri/kapsam kararları alındı (yukarıda).
-- Bu PROGRESS.md oluşturuldu. **Sonraki:** Adım 1 için onay bekleniyor.
+- Bu PROGRESS.md oluşturuldu.
+
+### ✅ Adım 1 — Proje iskeleti + repo hijyeni (2026-06-04)
+- **Klasör yapısı:** `src/{data,features,models,utils}`, `data/{raw,sample,processed}`, `notebooks/`, `models/`, `reports/figures/`, `tests/`. Boş `12 - BART Project/` silindi.
+- **Taşımalar:** 3 ham CSV → `data/raw/`; ana notebook → `notebooks/`.
+- **config.yaml:** Tüm path/parametreler merkezi; `local`/`kaggle` ortam ayrımı (Kaggle'a geçişte sadece `environment` değişir).
+- **src/config.py:** Ortam-bilinçli path çözümleyici (`lru_cache`, type hint + docstring). Yerelde **çalıştırılıp doğrulandı**.
+- **Repo hijyeni:** `requirements.txt` (yerel sürümlerle), `.gitignore` (ham veri + kişisel analiz notu + model/figür git dışı), `README` iskeleti.
+- **Bağımlılık:** `holidays` kuruldu (Adım 3 için).
+- **GitHub:** Repo `bay-area-transit-ridership-forecasting` (MIT license) ile bağlandı, ilk push yapıldı.
+- **Kazanım:** Versiyon kontrolü + reproducibility temeli, hardcode path kalktı, temiz dizin. **Hiçbir mevcut mantık bozulmadı** (notebook aynen duruyor).
+- **Sonraki:** Adım 2 için onay bekleniyor.
