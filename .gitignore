@@ -1,0 +1,33 @@
+# ---- Data (buyuk dosyalar git'e girmez) ----
+data/raw/
+data/processed/
+# Ornek veri (sample) repoda kalsin ki proje calisir gosterilebilsin:
+!data/sample/
+data/sample/*.csv
+
+# ---- Model artifacts ----
+models/*.txt
+models/*.pkl
+models/*.joblib
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+
+# ---- Reports (uretilen figurler) ----
+reports/figures/*.png
+
+# ---- OS / IDE ----
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ---- Ozel/kisisel notlar (repoda paylasilmaz) ----
+0.BU KLASOR VE PROJEYI ANALIZ ETTIRDIM15.txt
+_private/

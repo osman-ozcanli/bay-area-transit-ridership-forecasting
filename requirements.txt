@@ -1,0 +1,10 @@
+# BART Ridership Project - dependencies
+# Versiyonlar yerel ortamda dogrulanmistir (Python 3.10).
+pandas==2.3.3
+numpy==1.23.3
+scikit-learn==1.7.2
+lightgbm==4.6.0
+holidays==0.98
+PyYAML==6.0.1
+matplotlib>=3.7
+seaborn>=0.12

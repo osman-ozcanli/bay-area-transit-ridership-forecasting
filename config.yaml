@@ -1,0 +1,55 @@
+# ============================================================
+# BART Ridership Project - Central Configuration
+# Tum path ve parametreler buradan okunur (no hardcoding).
+# Yerel (local) ve Kaggle ortamlari icin path setleri ayrilmistir.
+# ============================================================
+
+# Aktif ortam (environment): "local" veya "kaggle"
+# Kaggle'a tasirken sadece burayi "kaggle" yapman yeterli.
+environment: local
+
+paths:
+  local:
+    raw_dir: "data/raw"
+    sample_dir: "data/sample"
+    processed_dir: "data/processed"
+    models_dir: "models"
+    figures_dir: "reports/figures"
+  kaggle:
+    raw_dir: "/kaggle/input/bart-ridership"
+    sample_dir: "data/sample"
+    processed_dir: "data/processed"
+    models_dir: "/kaggle/working/models"
+    figures_dir: "/kaggle/working/figures"
+
+# Ham veri dosya adlari (file names) - her iki ortamda da ayni
+files:
+  ridership_2016: "date-hour-soo-dest-2016.csv"
+  ridership_2017: "date-hour-soo-dest-2017.csv"
+  stations: "station_info.csv"
+  sample: "bart_sample.csv"           # gercek veriden turetilmis ornek
+  final_model: "bart_lgb_final.txt"
+
+# Eksik istasyon (WSPR) - referans butunlugu icin manuel eklenir
+# (Analiz 2.1: missing_origin tespiti)
+manual_stations:
+  - abbreviation: "WSPR"
+    description: "Warm Springs / South Fremont"
+    location: "-121.939317,37.502171"   # "lon,lat" formatinda (orijinal sema)
+    name: "Warm Springs / South Fremont"
+
+# Ornekleme (sampling) - gercek veriden zaman-bilincli alt kume
+sampling:
+  strategy: "by_station"     # "by_station" (tam zaman cizgisi korunur) | "by_daterange"
+  n_stations: 12             # by_station: kac istasyon tutulacak (busy+orta+edge-case)
+  random_state: 42
+
+# Hedef ve zaman ayarlari
+target: "Throughput"
+datetime_col: "DateTime"
+temporal_split:
+  train_year: 2016
+  test_year: 2017
+
+# Reproducibility
+random_state: 42
