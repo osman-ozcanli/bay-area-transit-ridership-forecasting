@@ -6,6 +6,17 @@
 
 ---
 
+## ▶️ DEVAM NOKTASI (yeni session burayı okusun)
+
+- **Tamamlanan:** Adım 0, 1, 2 ✅
+- **Şu an:** **Adım 3 — Feature engineering (`src/features`)** onay bekliyor.
+- **Sıradaki ilk iş:** Kullanıcıdan Adım 3 onayı al; alınınca `src/features/build_features.py` yaz (datetime/holiday/haversine + encoding fix + self-trip kararı + lag/rolling).
+- **Çalışma kuralları:** (1) Adım adım ilerle, her adım sonunda onay iste. (2) Önce yerelde çalıştır+doğrula, sonra Kaggle sürümü ver. (3) **Git'i kullanıcı yapar — Claude git komutu çalıştırmaz**, sadece sıralı komutları yazar. (4) Path/parametreler hep `config.yaml`'dan.
+- **Ortam:** Python 3.10, yerel veri `data/raw/` (git dışı), örnek `data/sample/bart_sample.csv` (1.12M satır). Tam eğitim Kaggle'da (`environment: kaggle`, `use_sample: false`).
+- **GitHub:** `bay-area-transit-ridership-forecasting` (MIT).
+
+---
+
 ## 0. Başlangıç Durumu (Baseline)
 
 - **Varlıklar:** Tek notebook `bart-project-bay-area-transit-ridership.ipynb` (154 hücre: 117 kod, 37 markdown), boş `12 - BART Project/` klasörü, analiz dosyası.
@@ -25,8 +36,8 @@
 |------|--------|-------|
 | 0 | Yol haritası + PROGRESS.md | ✅ Tamamlandı |
 | 1 | Proje iskeleti + repo hijyeni | ✅ Tamamlandı |
-| 2 | Gerçek veriden örneklem + veri yükleme modülü (`src/data`) | ⏳ Onay bekliyor |
-| 3 | Feature engineering modülü (`src/features`) | ⬜ Planlandı |
+| 2 | Gerçek veriden örneklem + veri yükleme modülü (`src/data`) | ✅ Tamamlandı |
+| 3 | Feature engineering modülü (`src/features`) | ⏳ Onay bekliyor |
 | 4 | Temporal split + model eğitim modülü (`src/models`) | ⬜ Planlandı |
 | 5 | Değerlendirme + yorumlama | ⬜ Planlandı |
 | 6 | Notebook'u anlatı (narrative) katmanına dönüştür | ⬜ Planlandı |
@@ -80,4 +91,14 @@
 - **Bağımlılık:** `holidays` kuruldu (Adım 3 için).
 - **GitHub:** Repo `bay-area-transit-ridership-forecasting` (MIT license) ile bağlandı, ilk push yapıldı.
 - **Kazanım:** Versiyon kontrolü + reproducibility temeli, hardcode path kalktı, temiz dizin. **Hiçbir mevcut mantık bozulmadı** (notebook aynen duruyor).
-- **Sonraki:** Adım 2 için onay bekleniyor.
+
+### ✅ Adım 2 — Gerçek veriden örneklem + veri yükleme modülü (2026-06-04)
+- **Veri keşfi (token-güvenli):** 2016 = 9.97M satır (tam yıl), **2017 = 3.31M satır (sadece 1 Oca–3 May!)**, toplam ~13.3M. 46 istasyon, stations dosyasında **WSPR eksik** (doğrulandı). Self-trip: ~276K. `Location` formatı `lon,lat,alt`.
+  - ⚠️ **Adım 4 için not:** 2017 ~4 aylık → temporal test seti kısa, raporlanacak.
+- **`src/data/load.py`:** `read_ridership` (2016+2017 concat, DateTime parse, sıralı), `read_sample`, `read_stations` (BOM-aware, WSPR config'ten eklenir), `merge_station_info` (origin+dest), `load_dataset` (orchestrator, `use_sample` bayrağına göre sample/full seçer). Type hint + docstring.
+- **`src/data/make_sample.py`:** `by_station` stratejisi — en busy + zorunlu edge-case (WSPR) istasyonlar, **hem Origin hem Destination seçili set içinde** (kapalı mini-ağ, tam zaman çizgisi korunur → lag/rolling ve temporal split bozulmaz).
+- **Boyut ayarı:** İlk denemede sadece Origin'e göre filtreleyince örnek **4.19M satır (%31.5)** çıktı — bir "küçük örnek" için fazla büyük olduğunu tespit ettik; hem Origin hem Destination'ı seçili sete kısıtlayıp (kapalı mini-ağ) **1.12M satıra (%8.4)** düşürdük.
+- **Yerel doğrulama:** Örnek = **1.12M satır / %8.4 / 37MB**, tarih 2016-01-01 → 2017-05-03, 12 istasyon, WSPR + self-trip dahil. `load_dataset` → 1.12M×8, istasyon merge'de **0 null**, WSPR koordinatı çözüldü.
+- **Kaggle sürümü:** Kod aynı; Kaggle'da sadece `config.yaml` → `environment: kaggle` + `use_sample: false` (tam 13.3M veri). Path farkı tamamen config ile yönetiliyor.
+- **Çözülen:** Hardcode path (analiz: kod kalitesi), referans bütünlüğü korundu.
+- **Sonraki:** Adım 3 için onay bekleniyor.

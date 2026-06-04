@@ -38,10 +38,14 @@ manual_stations:
     location: "-121.939317,37.502171"   # "lon,lat" formatinda (orijinal sema)
     name: "Warm Springs / South Fremont"
 
+# Veri kaynagi: True ise data/sample (yerel test), False ise tam ham veri (Kaggle egitim)
+use_sample: true
+
 # Ornekleme (sampling) - gercek veriden zaman-bilincli alt kume
 sampling:
   strategy: "by_station"     # "by_station" (tam zaman cizgisi korunur) | "by_daterange"
-  n_stations: 12             # by_station: kac istasyon tutulacak (busy+orta+edge-case)
+  n_stations: 12             # by_station: kac istasyon tutulacak (en busy + zorunlu edge-case)
+  must_include: ["WSPR"]     # edge-case istasyonlar her zaman dahil
   random_state: 42
 
 # Hedef ve zaman ayarlari
