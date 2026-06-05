@@ -69,5 +69,26 @@ features:
   # Modele girecek sayisal kolonlar (lag kolonlari runtime'da eklenir)
   numeric: ["Hour", "Month", "dist_km", "IsWeekend", "IsHoliday"]
 
+# Model (LightGBM) ayarlari
+model:
+  device: "cpu"               # local: cpu | kaggle: gpu (notebook'ta override edilir)
+  num_boost_round: 2000
+  early_stopping_rounds: 50
+  log_period: 100             # 0 = sessiz
+  run_cv: true                # TimeSeriesSplit CV calistir
+  cv_splits: 3
+  params:
+    objective: "regression"
+    metric: "mae"
+    boosting_type: "gbdt"
+    num_leaves: 256
+    learning_rate: 0.05
+    feature_fraction: 0.8
+    bagging_fraction: 0.8
+    bagging_freq: 5
+    n_jobs: -1
+    verbose: -1
+    random_state: 42
+
 # Reproducibility
 random_state: 42

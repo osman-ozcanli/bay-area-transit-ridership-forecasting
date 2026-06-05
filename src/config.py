@@ -5,6 +5,7 @@ paths so the rest of the codebase never hardcodes any path or parameter.
 """
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -29,7 +30,15 @@ def load_config(config_path: str | Path | None = None) -> dict[str, Any]:
     """
     path = Path(config_path) if config_path else CONFIG_PATH
     with open(path, "r", encoding="utf-8") as fh:
-        return yaml.safe_load(fh)
+        cfg = yaml.safe_load(fh)
+
+    # Environment override: `BART_ENV` env-var wins over the file value.
+    # Kaggle'da `os.environ["BART_ENV"]="kaggle"` demek config.yaml'i elle
+    # duzenlemekten kurtarir.
+    env_override = os.environ.get("BART_ENV")
+    if env_override:
+        cfg["environment"] = env_override
+    return cfg
 
 
 def get_paths(config: dict[str, Any] | None = None) -> dict[str, Path]:

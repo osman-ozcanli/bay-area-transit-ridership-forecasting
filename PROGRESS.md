@@ -8,9 +8,9 @@
 
 ## ▶️ DEVAM NOKTASI (yeni session burayı okusun)
 
-- **Tamamlanan:** Adım 0, 1, 2, 3 ✅
-- **Şu an:** **Adım 4 — Temporal split + model eğitim (`src/models`)** onay bekliyor.
-- **Sıradaki ilk iş:** Kullanıcıdan Adım 4 onayı al; alınınca `config.py`'ye `BART_ENV` override ekle + `src/models/train.py` (temporal split 2016/2017, TimeSeriesSplit CV, LightGBM `categorical_feature` + GPU `device:gpu`, model kayıt).
+- **Tamamlanan:** Adım 0, 1, 2, 3, 4 ✅
+- **Şu an:** **Adım 5 — Değerlendirme + feature importance yorumu** onay bekliyor.
+- **Sıradaki ilk iş:** Kullanıcıdan Adım 5 onayı al; alınınca `src/models/evaluate.py` (residual analizi, feature importance + YORUM, grafikler `reports/figures/`).
 - **Çalışma kuralları:** (1) Adım adım ilerle, her adım sonunda onay iste. (2) Önce yerelde çalıştır+doğrula, sonra Kaggle sürümü ver. (3) **Git'i kullanıcı yapar — Claude git komutu çalıştırmaz**, sadece sıralı komutları yazar. (4) Path/parametreler hep `config.yaml`'dan. (5) **Her adımın iki çıktısı vardır:** yerel kod `src/` altına; Kaggle'da çalıştırılacak kısım **`notebooks/bart_kaggle.ipynb`'ye yeni hücre olarak EKLENİR** (üst üste birikir, sohbete yapıştırılmaz).
 - **Kaggle notebook'u:** `notebooks/bart_kaggle.ipynb` — birikimli. Şu an: Kurulum (clone) + Adım 2 (veri yükleme). Kullanıcı bunu Kaggle'a import edip çalıştırır. (Eski/dağınık orijinal notebook `notebooks/bart-project-...ipynb` sadece referans.)
 - **Ortam:** Python 3.10, yerel veri `data/raw/` (git dışı), örnek `data/sample/bart_sample.csv` (1.12M satır). Tam eğitim Kaggle'da (`environment: kaggle`, `use_sample: false`).
@@ -41,8 +41,8 @@
 | 1 | Proje iskeleti + repo hijyeni | ✅ Tamamlandı |
 | 2 | Gerçek veriden örneklem + veri yükleme modülü (`src/data`) | ✅ Tamamlandı |
 | 3 | Feature engineering modülü (`src/features`) | ✅ Tamamlandı |
-| 4 | Temporal split + model eğitim modülü (`src/models`) | ⏳ Onay bekliyor |
-| 5 | Değerlendirme + yorumlama | ⬜ Planlandı |
+| 4 | Temporal split + model eğitim modülü (`src/models`) | ✅ Tamamlandı |
+| 5 | Değerlendirme + yorumlama | ⏳ Onay bekliyor |
 | 6 | Notebook'u anlatı (narrative) katmanına dönüştür | ⬜ Planlandı |
 | 7 | Dokümantasyon + final cila | ⬜ Planlandı |
 
@@ -116,4 +116,13 @@
 - **Yerel doğrulama (örnek):** 1.118M → **1.028M satır** (90.134 self-trip düştü, kalan 0). dist_km 0.52–51.96 km, 0 NaN. IsHoliday %3.4. lag_1 NaN = 132 = OD çifti sayısı (her grup ilk kaydı). **Leakage testi geçti** (lag_1 = bir önceki saat değeri).
 - **Kaggle notebook:** `bart_kaggle.ipynb`'ye Adım 3 hücreleri eklendi (7 hücre).
 - **Çözülen:** 3.3 (encoding), 3.5 (self-trip) + lag/rolling senior eklemesi.
-- **Sonraki:** Adım 4 için onay bekleniyor.
+
+### ✅ Adım 4 — Temporal split + model eğitim + kayıt (2026-06-05)
+- **`config.py`:** `BART_ENV` env-var override eklendi (Kaggle'da `os.environ["BART_ENV"]="kaggle"` → config.yaml elle düzenlemeye gerek yok).
+- **`config.yaml`:** `model` bölümü (device cpu/gpu, params, num_boost_round=2000 tavan, early_stopping=50, run_cv, cv_splits=3).
+- **`src/models/train.py`:** `temporal_split` (2016→train/2017→test, analiz 3.2), `run_cv` (TimeSeriesSplit, analiz 3.9), `train_model` (LightGBM `categorical_feature` + early stopping + **GPU→CPU otomatik fallback**), `save_model` (analiz 3.8).
+- **Yerel doğrulama (örnek, CPU):** train/test = 761.728/266.370. best_iter=700 (early stopping, 2000'e gitmedi). **Holdout MAE 6.63 / RMSE 14.07 / R² 0.9437.** CV MAE 6.60 ± 0.24 (düşük varyans). Model `models/bart_lgb_final.txt`'e yazıldı.
+- **KRİTİK BULGU:** Doğru temporal split ile R² yine 0.94 → analiz 3.2'deki "leakage R²'yi şişirmiş olabilir" şüphesi **çürütüldü**, model gerçekten zamanda genelleşiyor.
+- **Kaggle notebook:** Adım 4 hücreleri eklendi (9 hücre, `device=gpu`).
+- **Çözülen:** 3.2 (temporal split), 3.8 (model kayıt), 3.9 (CV). Not: 3.1 (v3 bug) yeni tek-akış pipeline'da zaten yok.
+- **Sonraki:** Adım 5 için onay bekleniyor.
