@@ -55,5 +55,19 @@ temporal_split:
   train_year: 2016
   test_year: 2017
 
+# Feature engineering ayarlari
+features:
+  holiday_subdiv: "CA"          # California tatilleri
+  # Self-trip (Origin==Destination) politikasi: "drop" | "flag" | "keep"
+  # Analiz 3.5: dist_km=0 olan ayni-istasyon kayitlari (muhtemelen turnike artefakti)
+  self_trip_policy: "drop"
+  # Lag/rolling (zaman-sirali, leakage-safe). Her OD cifti icinde "onceki kayit".
+  lags: [1, 24]                 # 1 = bir onceki gozlem, 24 ~ bir onceki gunun ayni saati
+  rolling_window: 3             # son N gozlemin ortalamasi (shift'li, gelecek sizmaz)
+  # LightGBM'e dogrudan category dtype verilecek kolonlar (cat.codes ordinal fix, analiz 3.3)
+  categorical: ["Origin", "Destination", "DayOfWeek", "Period"]
+  # Modele girecek sayisal kolonlar (lag kolonlari runtime'da eklenir)
+  numeric: ["Hour", "Month", "dist_km", "IsWeekend", "IsHoliday"]
+
 # Reproducibility
 random_state: 42

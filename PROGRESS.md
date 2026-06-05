@@ -8,9 +8,9 @@
 
 ## ▶️ DEVAM NOKTASI (yeni session burayı okusun)
 
-- **Tamamlanan:** Adım 0, 1, 2 ✅
-- **Şu an:** **Adım 3 — Feature engineering (`src/features`)** onay bekliyor.
-- **Sıradaki ilk iş:** Kullanıcıdan Adım 3 onayı al; alınınca `src/features/build_features.py` yaz (datetime/holiday/haversine + encoding fix + self-trip kararı + lag/rolling).
+- **Tamamlanan:** Adım 0, 1, 2, 3 ✅
+- **Şu an:** **Adım 4 — Temporal split + model eğitim (`src/models`)** onay bekliyor.
+- **Sıradaki ilk iş:** Kullanıcıdan Adım 4 onayı al; alınınca `config.py`'ye `BART_ENV` override ekle + `src/models/train.py` (temporal split 2016/2017, TimeSeriesSplit CV, LightGBM `categorical_feature` + GPU `device:gpu`, model kayıt).
 - **Çalışma kuralları:** (1) Adım adım ilerle, her adım sonunda onay iste. (2) Önce yerelde çalıştır+doğrula, sonra Kaggle sürümü ver. (3) **Git'i kullanıcı yapar — Claude git komutu çalıştırmaz**, sadece sıralı komutları yazar. (4) Path/parametreler hep `config.yaml`'dan. (5) **Her adımın iki çıktısı vardır:** yerel kod `src/` altına; Kaggle'da çalıştırılacak kısım **`notebooks/bart_kaggle.ipynb`'ye yeni hücre olarak EKLENİR** (üst üste birikir, sohbete yapıştırılmaz).
 - **Kaggle notebook'u:** `notebooks/bart_kaggle.ipynb` — birikimli. Şu an: Kurulum (clone) + Adım 2 (veri yükleme). Kullanıcı bunu Kaggle'a import edip çalıştırır. (Eski/dağınık orijinal notebook `notebooks/bart-project-...ipynb` sadece referans.)
 - **Ortam:** Python 3.10, yerel veri `data/raw/` (git dışı), örnek `data/sample/bart_sample.csv` (1.12M satır). Tam eğitim Kaggle'da (`environment: kaggle`, `use_sample: false`).
@@ -40,8 +40,8 @@
 | 0 | Yol haritası + PROGRESS.md | ✅ Tamamlandı |
 | 1 | Proje iskeleti + repo hijyeni | ✅ Tamamlandı |
 | 2 | Gerçek veriden örneklem + veri yükleme modülü (`src/data`) | ✅ Tamamlandı |
-| 3 | Feature engineering modülü (`src/features`) | ⏳ Onay bekliyor |
-| 4 | Temporal split + model eğitim modülü (`src/models`) | ⬜ Planlandı |
+| 3 | Feature engineering modülü (`src/features`) | ✅ Tamamlandı |
+| 4 | Temporal split + model eğitim modülü (`src/models`) | ⏳ Onay bekliyor |
 | 5 | Değerlendirme + yorumlama | ⬜ Planlandı |
 | 6 | Notebook'u anlatı (narrative) katmanına dönüştür | ⬜ Planlandı |
 | 7 | Dokümantasyon + final cila | ⬜ Planlandı |
@@ -104,4 +104,16 @@
 - **Yerel doğrulama:** Örnek = **1.12M satır / %8.4 / 37MB**, tarih 2016-01-01 → 2017-05-03, 12 istasyon, WSPR + self-trip dahil. `load_dataset` → 1.12M×8, istasyon merge'de **0 null**, WSPR koordinatı çözüldü.
 - **Kaggle sürümü:** Kod aynı; Kaggle'da sadece `config.yaml` → `environment: kaggle` + `use_sample: false` (tam 13.3M veri). Path farkı tamamen config ile yönetiliyor.
 - **Çözülen:** Hardcode path (analiz: kod kalitesi), referans bütünlüğü korundu.
-- **Sonraki:** Adım 3 için onay bekleniyor.
+
+### ✅ Adım 3 — Feature engineering (2026-06-05)
+- **`src/features/build_features.py`** (config-driven, type hint + docstring):
+  - `add_time_features`: Hour, DayOfWeek, Month, IsWeekend, Period (orijinal mantık).
+  - `add_holiday_feature`: `holidays.US(subdiv='CA')` → IsHoliday.
+  - `add_distance_feature`: `Location`'ı `lon,lat`'a parse (2/3 parçaya dayanıklı, WSPR güvenli) + haversine `dist_km` (vectorized).
+  - `handle_self_trips`: **policy="drop"** (config'ten) → analiz 3.5 çözüldü.
+  - `add_lag_features`: OD-bazlı, zaman-sıralı `lag_1`, `lag_24`, `roll_mean_3` — **leakage-safe** (sadece geçmiş, shift'li). NaN'ler LightGBM'e bırakıldı.
+  - `prepare_categoricals`: Origin/Destination/DayOfWeek/Period → `category` dtype → **analiz 3.3 (cat.codes ordinal) çözüldü**.
+- **Yerel doğrulama (örnek):** 1.118M → **1.028M satır** (90.134 self-trip düştü, kalan 0). dist_km 0.52–51.96 km, 0 NaN. IsHoliday %3.4. lag_1 NaN = 132 = OD çifti sayısı (her grup ilk kaydı). **Leakage testi geçti** (lag_1 = bir önceki saat değeri).
+- **Kaggle notebook:** `bart_kaggle.ipynb`'ye Adım 3 hücreleri eklendi (7 hücre).
+- **Çözülen:** 3.3 (encoding), 3.5 (self-trip) + lag/rolling senior eklemesi.
+- **Sonraki:** Adım 4 için onay bekleniyor.
