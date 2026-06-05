@@ -11,7 +11,8 @@
 - **Tamamlanan:** Adım 0, 1, 2 ✅
 - **Şu an:** **Adım 3 — Feature engineering (`src/features`)** onay bekliyor.
 - **Sıradaki ilk iş:** Kullanıcıdan Adım 3 onayı al; alınınca `src/features/build_features.py` yaz (datetime/holiday/haversine + encoding fix + self-trip kararı + lag/rolling).
-- **Çalışma kuralları:** (1) Adım adım ilerle, her adım sonunda onay iste. (2) Önce yerelde çalıştır+doğrula, sonra Kaggle sürümü ver. (3) **Git'i kullanıcı yapar — Claude git komutu çalıştırmaz**, sadece sıralı komutları yazar. (4) Path/parametreler hep `config.yaml`'dan.
+- **Çalışma kuralları:** (1) Adım adım ilerle, her adım sonunda onay iste. (2) Önce yerelde çalıştır+doğrula, sonra Kaggle sürümü ver. (3) **Git'i kullanıcı yapar — Claude git komutu çalıştırmaz**, sadece sıralı komutları yazar. (4) Path/parametreler hep `config.yaml`'dan. (5) **Her adımın iki çıktısı vardır:** yerel kod `src/` altına; Kaggle'da çalıştırılacak kısım **`notebooks/bart_kaggle.ipynb`'ye yeni hücre olarak EKLENİR** (üst üste birikir, sohbete yapıştırılmaz).
+- **Kaggle notebook'u:** `notebooks/bart_kaggle.ipynb` — birikimli. Şu an: Kurulum (clone) + Adım 2 (veri yükleme). Kullanıcı bunu Kaggle'a import edip çalıştırır. (Eski/dağınık orijinal notebook `notebooks/bart-project-...ipynb` sadece referans.)
 - **Ortam:** Python 3.10, yerel veri `data/raw/` (git dışı), örnek `data/sample/bart_sample.csv` (1.12M satır). Tam eğitim Kaggle'da (`environment: kaggle`, `use_sample: false`).
 - **GitHub:** `bay-area-transit-ridership-forecasting` (MIT).
 - **Kaggle stratejisi (kilitli):** GitHub'dan `git clone` + `sys.path` → modüler `src/` import. GPU = notebook'ta Accelerator toggle + Adım 4'te LightGBM `device: gpu`. Adım adım rehber: **`KAGGLE_GUIDE.md`** (clone/GPU adımları hazır; eğitim hücreleri Adım 4'te dolacak).
@@ -67,9 +68,9 @@
 **Yapılacak:** `src/models/evaluate.py`: MAE, RMSE, R², residual analizi. Feature importance + **yorum**. Grafikler `reports/figures/`.
 **Kazanım:** Güvenilir metrikler, analitik derinlik. **Çözülen:** 3.7.
 
-### Adım 6 — Notebook'u anlatı katmanına dönüştür
-**Yapılacak:** Temiz notebook modülleri import eder, EDA sorularını cevaplar. `cell-48` fix, heatmap yorumları, duplicate temizlik.
-**Kazanım:** Okunabilir, savunulabilir portföy notebook'u. **Çözülen:** 3.4, 3.6, 3.10.
+### Adım 6 — Notebook'u anlatı (narrative) katmanına cilala
+**Yapılacak:** Birikimli `notebooks/bart_kaggle.ipynb`'yi final portföy notebook'una getir: EDA sorularının markdown anlatımı, grafik yorumları, akış düzeni. Eski/dağınık orijinal notebook'un kaderine karar ver (arşivle/kaldır). Not: eski notebook'un `cell-48`/duplicate sorunları (3.4, 3.6, 3.10) yeni notebook'ta zaten yok — sıfırdan temiz kuruluyor.
+**Kazanım:** Okunabilir, savunulabilir portföy notebook'u.
 
 ### Adım 7 — Dokümantasyon + final cila
 **Yapılacak:** README (problem/veri/yaklaşım/sonuç/çalıştırma), requirements pin, docstring kontrolü, opsiyonel testler.
