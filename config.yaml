@@ -69,6 +69,21 @@ features:
   # Modele girecek sayisal kolonlar (lag kolonlari runtime'da eklenir)
   numeric: ["Hour", "Month", "dist_km", "IsWeekend", "IsHoliday"]
 
+# EDA (exploratory analysis / kesifsel analiz) ayarlari
+# Orijinal notebook'taki 6 is sorusu icin parametreler (hardcoding yok).
+eda:
+  top_n: 10                       # bar grafiklerde gosterilecek satir sayisi
+  evening_period: "Evening"       # "ise donus" koltuk analizi icin period etiketi
+  late_night_period: "LateNight"  # gece yolcusu sorusu icin period etiketi
+  # Berkeley -> SF "koltuk bulma" sorusu: cografi bounding-box (spatial filter),
+  # manuel istasyon secmeden lat/lon ile filtreler (orijinal cell-66/67 mantigi).
+  berkeley_box:
+    lat: [37.85, 37.89]
+    lon: [-122.28, -122.25]
+  sf_box:
+    lat: [37.70, 37.81]
+    lon: [-122.52, -122.36]
+
 # Model (LightGBM) ayarlari
 model:
   device: "cpu"               # local: cpu | kaggle: gpu (notebook'ta override edilir)

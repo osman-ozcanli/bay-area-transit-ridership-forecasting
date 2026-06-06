@@ -8,8 +8,8 @@
 
 ## ▶️ DEVAM NOKTASI (yeni session burayı okusun)
 
-- **Tamamlanan:** Adım 0, 1, 2, 3, 4, 5 ✅
-- **Şu an:** **Adım 6 — Final narrative notebook.** Yapı kararı VERİLDİ; kullanıcı işi kendisi sürdürecek (kod yazılmadı, sadece plan kayıtlı).
+- **Tamamlanan:** Adım 0, 1, 2, 3, 4, 5 ✅; **Adım 6 yerel kod + notebook ✅ (Kaggle teyidi bekliyor)**
+- **Şu an:** **Adım 6 — Final narrative notebook.** `src/eda.py` yazıldı + yerelde doğrulandı, `bart_kaggle.ipynb` final anlatıya cilalandı (19 hücre). **Açık karar:** eski dağınık notebook arşivlensin mi/silinsin mi (kullanıcıya soruldu). Kaggle'da tam veriyle EDA çalıştırılıp teyit alınacak.
 - **Adım 6 yapı kararı:** **TEK notebook, her şey dahil** (EDA + eğitim + değerlendirme + conclusion, tek hikaye). Eğitim dürüst ana akış olarak kalır; "her çalıştırmada 70dk" sorunu yok çünkü Kaggle'da **bir kez "Save & Run All (Commit)"** ile çalıştırılır → yayınlanmış sürüm tüm çıktıları taşır, açan kişi yeniden çalıştırmaz.
 - **Adım 6 PLANI (kullanıcı devam edince uygulanacak):**
   1. `src/eda.py` — 6 iş sorusu fonksiyonları: en yoğun istasyon, en az/çok popüler rota, en yoğun gün, gece (LateNight) yolcuları, popüler rotalar, Berkeley→SF en iyi saat. Modüler + yerel doğrulama.
@@ -50,7 +50,7 @@
 | 3 | Feature engineering modülü (`src/features`) | ✅ Tamamlandı |
 | 4 | Temporal split + model eğitim modülü (`src/models`) | ✅ Tamamlandı |
 | 5 | Değerlendirme + yorumlama | ✅ Tamamlandı |
-| 6 | Notebook'u anlatı (narrative) katmanına dönüştür | ⏳ Onay bekliyor |
+| 6 | Notebook'u anlatı (narrative) katmanına dönüştür | ✅ Yerel kod + notebook (Kaggle teyidi bekliyor) |
 | 7 | Dokümantasyon + final cila | ⬜ Planlandı |
 
 ---
@@ -133,6 +133,14 @@
 - **KAGGLE TAM VERİ SONUCU (GPU, 2026-06-06):** train/test = 9.763.937 / 3.245.031. **Holdout MAE 3.1733 / RMSE 8.4799 / R² 0.9369.** CV MAE **3.177 ± 0.0914** (çok düşük varyans → stabil). Model `/kaggle/working/models/bart_lgb_final.txt`. (Yereldeki örnek MAE 6.63'tü; tam veri ile 3.17'ye düştü.) Tüm 4 tur ~65-70 dk.
 - **Kaggle notebook:** Adım 4 hücreleri eklendi (9 hücre, `device=gpu`).
 - **Çözülen:** 3.2 (temporal split), 3.8 (model kayıt), 3.9 (CV). Not: 3.1 (v3 bug) yeni tek-akış pipeline'da zaten yok.
+
+### ✅ Adım 6 — Final narrative notebook (yerel kod) (2026-06-06)
+- **`src/eda.py`** (config-driven, type hint + docstring): 6 iş sorusu fonksiyonu — `busiest_stations`, `least_popular_routes`/`popular_routes` (self-trip drop, gerçek rota), `busiest_day`, `late_night_summary` + `ridership_by_hour` (**analiz 3.6 fix:** throughput-ağırlıklı, satır-sayımı değil) + `hour_day_pivot` (heatmap), `berkeley_sf_best_hour` (config'teki bounding-box ile spatial filter, manuel istasyon seçmeden). `prepare_eda_frame` FE primitiflerini (`add_time_features`+`add_distance_feature`) **yeniden kullanır** (kod tekrarı yok). Her soru için `plot_*` + `interpret_eda` (yazılı YORUM) + `run_eda` orchestrator.
+- **`config.yaml`:** `eda` bölümü eklendi (top_n, evening/late_night period etiketleri, berkeley_box/sf_box lat-lon — **hardcode kalktı**).
+- **Yerel doğrulama (örnek 12-istasyon):** 7 grafik üretildi, 6 soru yanıtlandı. Q6 = **04:00** (koltuk) / akşam **19:00** → orijinal notebook bulgusuyla birebir. (Örnek alt küme olduğu için busiest=POWL; tam veride EMBR çıkacak, fonksiyonlar data-driven.)
+- **`bart_kaggle.ipynb` → final narrative (19 hücre):** başlık+problem+veri (cilalandı) → kurulum → veri → **EDA (run_eda + 7 grafik + YORUM, build_features'tan ÖNCE)** → feature → eğitim (ana akış) → değerlendirme → conclusion. **Adım 5 iyileştirme notu uygulandı:** eval hücresi artık holdout metriklerini eğitimdeki `results`'tan alıyor (3.2M satır **yeniden predict YOK**), importance modelden anında; ağır residual/predict **ayrı opsiyonel hücreye** alındı. Tüm kod hücreleri syntax-check'ten geçti.
+- **Eski notebook kararı VERİLDİ:** `notebooks/archive/`'e taşındı (referans-only, `archive/README.md` açıklamalı). Final notebook = `notebooks/bart_kaggle.ipynb`.
+- **Sonraki:** Kullanıcı GitHub'a push → Kaggle'da fresh clone → EDA bloğunu tam veriyle çalıştırıp teyit; sonra Adım 7 (dokümantasyon + final cila).
 
 ### ✅ Adım 5 — Değerlendirme + feature importance YORUMU (2026-06-06)
 - **`src/models/evaluate.py`:** `load_model` (repodan, PROJECT_ROOT-relative → local+Kaggle aynı), `evaluate_holdout` (2017 MAE/RMSE/R²), `feature_importance_df` (gain+split), `plot_feature_importance` + `plot_residuals` (reports/figures'a kayıt), `interpret_importance` (yazılı yorum).
