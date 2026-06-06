@@ -9,6 +9,8 @@ data/sample/*.csv
 models/*.txt
 models/*.pkl
 models/*.joblib
+# Final model repoda kalsin (kucuk ~15-20MB) -> Kaggle clone otomatik getirir
+!models/bart_lgb_final.txt
 
 # ---- Python ----
 __pycache__/
