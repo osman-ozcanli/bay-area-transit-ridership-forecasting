@@ -9,8 +9,14 @@
 ## ▶️ DEVAM NOKTASI (yeni session burayı okusun)
 
 - **Tamamlanan:** Adım 0, 1, 2, 3, 4, 5 ✅
-- **Şu an:** **Adım 6 — Notebook'u anlatı (narrative) katmanına cilala** onay bekliyor.
-- **Sıradaki ilk iş:** Kullanıcıdan Adım 6 onayı al; alınınca `bart_kaggle.ipynb`'yi final portföy notebook'una getir (EDA sorularının markdown anlatımı, grafik yorumları, akış). Eski dağınık notebook'un kaderine karar ver.
+- **Şu an:** **Adım 6 — Final narrative notebook.** Yapı kararı VERİLDİ; kullanıcı işi kendisi sürdürecek (kod yazılmadı, sadece plan kayıtlı).
+- **Adım 6 yapı kararı:** **TEK notebook, her şey dahil** (EDA + eğitim + değerlendirme + conclusion, tek hikaye). Eğitim dürüst ana akış olarak kalır; "her çalıştırmada 70dk" sorunu yok çünkü Kaggle'da **bir kez "Save & Run All (Commit)"** ile çalıştırılır → yayınlanmış sürüm tüm çıktıları taşır, açan kişi yeniden çalıştırmaz.
+- **Adım 6 PLANI (kullanıcı devam edince uygulanacak):**
+  1. `src/eda.py` — 6 iş sorusu fonksiyonları: en yoğun istasyon, en az/çok popüler rota, en yoğun gün, gece (LateNight) yolcuları, popüler rotalar, Berkeley→SF en iyi saat. Modüler + yerel doğrulama.
+  2. `bart_kaggle.ipynb`'yi final narrative'e cilala: başlık+problem+veri → setup → veri → **EDA (her soru: kod→grafik→YORUM; analiz 3.6 cell-48 fix + heatmap yorumu)** → feature → eğitim (ana akış) → değerlendirme+importance+yorum → conclusion.
+  3. Eski dağınık notebook (`bart-project-...ipynb`) → arşivle/sil kararı.
+  4. PROGRESS.md güncelle.
+- **Çalışma şekli:** Önce `src/eda.py` yaz + yerelde örnekle doğrula, bulguları göster; sonra notebook'u kur. Adım adım, onaylı.
 - **Kaggle çalıştırma modeli:** Notebook'ta **Adım 4 = eğitim ana akış** (çalışan kod, ~65-70 dk, GPU). "Modeli yükle" yolu **(Bilgi) markdown notu** olarak duruyor (eğitmeden devam etmek istenirse koda çevrilir). Model `models/bart_lgb_final.txt` (~43MB) repoda commit'li. Not: ileride Adım 6'da iki-notebook (train / analysis) ayrımı tartışılacak.
 - **Çalışma kuralları:** (1) Adım adım ilerle, her adım sonunda onay iste. (2) Önce yerelde çalıştır+doğrula, sonra Kaggle sürümü ver. (3) **Git'i kullanıcı yapar — Claude git komutu çalıştırmaz**, sadece sıralı komutları yazar. (4) Path/parametreler hep `config.yaml`'dan. (5) **Her adımın iki çıktısı vardır:** yerel kod `src/` altına; Kaggle'da çalıştırılacak kısım **`notebooks/bart_kaggle.ipynb`'ye yeni hücre olarak EKLENİR** (üst üste birikir, sohbete yapıştırılmaz).
 - **Kaggle notebook'u:** `notebooks/bart_kaggle.ipynb` — birikimli. Şu an: Kurulum (clone) + Adım 2 (veri yükleme). Kullanıcı bunu Kaggle'a import edip çalıştırır. (Eski/dağınık orijinal notebook `notebooks/bart-project-...ipynb` sadece referans.)
