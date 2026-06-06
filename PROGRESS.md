@@ -123,6 +123,7 @@
 - **`src/models/train.py`:** `temporal_split` (2016→train/2017→test, analiz 3.2), `run_cv` (TimeSeriesSplit, analiz 3.9), `train_model` (LightGBM `categorical_feature` + early stopping + **GPU→CPU otomatik fallback**), `save_model` (analiz 3.8).
 - **Yerel doğrulama (örnek, CPU):** train/test = 761.728/266.370. best_iter=700 (early stopping, 2000'e gitmedi). **Holdout MAE 6.63 / RMSE 14.07 / R² 0.9437.** CV MAE 6.60 ± 0.24 (düşük varyans). Model `models/bart_lgb_final.txt`'e yazıldı.
 - **KRİTİK BULGU:** Doğru temporal split ile R² yine 0.94 → analiz 3.2'deki "leakage R²'yi şişirmiş olabilir" şüphesi **çürütüldü**, model gerçekten zamanda genelleşiyor.
+- **KAGGLE TAM VERİ SONUCU (GPU, 2026-06-06):** train/test = 9.763.937 / 3.245.031. **Holdout MAE 3.1733 / RMSE 8.4799 / R² 0.9369.** CV MAE **3.177 ± 0.0914** (çok düşük varyans → stabil). Model `/kaggle/working/models/bart_lgb_final.txt`. (Yereldeki örnek MAE 6.63'tü; tam veri ile 3.17'ye düştü.) Tüm 4 tur ~65-70 dk.
 - **Kaggle notebook:** Adım 4 hücreleri eklendi (9 hücre, `device=gpu`).
 - **Çözülen:** 3.2 (temporal split), 3.8 (model kayıt), 3.9 (CV). Not: 3.1 (v3 bug) yeni tek-akış pipeline'da zaten yok.
 - **Sonraki:** Adım 5 için onay bekleniyor.
