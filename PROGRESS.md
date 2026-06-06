@@ -8,9 +8,10 @@
 
 ## ▶️ DEVAM NOKTASI (yeni session burayı okusun)
 
-- **Tamamlanan:** Adım 0, 1, 2, 3, 4 ✅
-- **Şu an:** **Adım 5 — Değerlendirme + feature importance yorumu** onay bekliyor.
-- **Sıradaki ilk iş:** Kullanıcıdan Adım 5 onayı al; alınınca `src/models/evaluate.py` (residual analizi, feature importance + YORUM, grafikler `reports/figures/`).
+- **Tamamlanan:** Adım 0, 1, 2, 3, 4, 5 ✅
+- **Şu an:** **Adım 6 — Notebook'u anlatı (narrative) katmanına cilala** onay bekliyor.
+- **Sıradaki ilk iş:** Kullanıcıdan Adım 6 onayı al; alınınca `bart_kaggle.ipynb`'yi final portföy notebook'una getir (EDA sorularının markdown anlatımı, grafik yorumları, akış). Eski dağınık notebook'un kaderine karar ver.
+- **ÖNEMLİ — Kaggle çalıştırma modeli (yeni):** Notebook artık eğitmiyor; **modeli repodan yüklüyor** (clone getiriyor, `models/bart_lgb_final.txt` ~43MB git'te). Kullanıcı gelince: güncel `bart_kaggle.ipynb`'yi **import et → Run All** (~5-10 dk, eğitim yok). Uzun eğitim sadece model silinirse tekrar olur.
 - **Çalışma kuralları:** (1) Adım adım ilerle, her adım sonunda onay iste. (2) Önce yerelde çalıştır+doğrula, sonra Kaggle sürümü ver. (3) **Git'i kullanıcı yapar — Claude git komutu çalıştırmaz**, sadece sıralı komutları yazar. (4) Path/parametreler hep `config.yaml`'dan. (5) **Her adımın iki çıktısı vardır:** yerel kod `src/` altına; Kaggle'da çalıştırılacak kısım **`notebooks/bart_kaggle.ipynb`'ye yeni hücre olarak EKLENİR** (üst üste birikir, sohbete yapıştırılmaz).
 - **Kaggle notebook'u:** `notebooks/bart_kaggle.ipynb` — birikimli. Şu an: Kurulum (clone) + Adım 2 (veri yükleme). Kullanıcı bunu Kaggle'a import edip çalıştırır. (Eski/dağınık orijinal notebook `notebooks/bart-project-...ipynb` sadece referans.)
 - **Ortam:** Python 3.10, yerel veri `data/raw/` (git dışı), örnek `data/sample/bart_sample.csv` (1.12M satır). Tam eğitim Kaggle'da (`environment: kaggle`, `use_sample: false`).
@@ -42,8 +43,8 @@
 | 2 | Gerçek veriden örneklem + veri yükleme modülü (`src/data`) | ✅ Tamamlandı |
 | 3 | Feature engineering modülü (`src/features`) | ✅ Tamamlandı |
 | 4 | Temporal split + model eğitim modülü (`src/models`) | ✅ Tamamlandı |
-| 5 | Değerlendirme + yorumlama | ⏳ Onay bekliyor |
-| 6 | Notebook'u anlatı (narrative) katmanına dönüştür | ⬜ Planlandı |
+| 5 | Değerlendirme + yorumlama | ✅ Tamamlandı |
+| 6 | Notebook'u anlatı (narrative) katmanına dönüştür | ⏳ Onay bekliyor |
 | 7 | Dokümantasyon + final cila | ⬜ Planlandı |
 
 ---
@@ -126,4 +127,11 @@
 - **KAGGLE TAM VERİ SONUCU (GPU, 2026-06-06):** train/test = 9.763.937 / 3.245.031. **Holdout MAE 3.1733 / RMSE 8.4799 / R² 0.9369.** CV MAE **3.177 ± 0.0914** (çok düşük varyans → stabil). Model `/kaggle/working/models/bart_lgb_final.txt`. (Yereldeki örnek MAE 6.63'tü; tam veri ile 3.17'ye düştü.) Tüm 4 tur ~65-70 dk.
 - **Kaggle notebook:** Adım 4 hücreleri eklendi (9 hücre, `device=gpu`).
 - **Çözülen:** 3.2 (temporal split), 3.8 (model kayıt), 3.9 (CV). Not: 3.1 (v3 bug) yeni tek-akış pipeline'da zaten yok.
-- **Sonraki:** Adım 5 için onay bekleniyor.
+
+### ✅ Adım 5 — Değerlendirme + feature importance YORUMU (2026-06-06)
+- **`src/models/evaluate.py`:** `load_model` (repodan, PROJECT_ROOT-relative → local+Kaggle aynı), `evaluate_holdout` (2017 MAE/RMSE/R²), `feature_importance_df` (gain+split), `plot_feature_importance` + `plot_residuals` (reports/figures'a kayıt), `interpret_importance` (yazılı yorum).
+- **Feature importance (tam-veri model):** `Throughput_lag_1` **%62.9** (ezici), Hour %8.8, Origin %7.4, roll_mean_3 %6.1, Destination %6.0, Period %5.0, dist_km %2.2, gerisi minik. **Lag+rolling birlikte %69** → talep zaman-otokorelasyonlu. **Analiz 3.7 (grafik var yorum yok) çözüldü** — yazılı yorum hem koda hem notebook markdown'ına eklendi.
+- **Yerel doğrulama:** evaluate.py çalıştı, 2 grafik üretildi (feature_importance.png, residuals.png). (Yerel MAE 6.59 — örnek 12-istasyon alt kümesi; Kaggle tam veride ~3.17.)
+- **Notebook yeniden yapılandırıldı (13 hücre):** Adım 4 eğitim kodu → **markdown referans** (akıştan çıktı, bilgi olarak kaldı); yerine **"model yükle" hücresi** (varsa repodan yükle, yoksa eğit); Adım 5 hücreleri eklendi (değerlendirme + importance + grafikler). Tüm kod hücreleri syntax-check'ten geçti.
+- **Çalışma deseni:** Pahalı eğitim (1 kez) ile ucuz değerlendirme ayrıldı → Kaggle'da artık Run All ~5-10 dk, oturum kopması riski yok.
+- **Sonraki:** Adım 6 için onay bekleniyor.
