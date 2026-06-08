@@ -33,3 +33,6 @@ Thumbs.db
 # ---- Ozel/kisisel notlar (repoda paylasilmaz) ----
 0.BU KLASOR VE PROJEYI ANALIZ ETTIRDIM15.txt
 _private/
+
+# ---- Claude session kurallari (yerel; sessionlari baglar, repoya girmez) ----
+CLAUDE.md
