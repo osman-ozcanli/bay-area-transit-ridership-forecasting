@@ -53,6 +53,10 @@
 | 6 | Notebook'u anlatı (narrative) katmanına dönüştür | ✅ Yerel kod + notebook (Kaggle teyidi bekliyor) |
 | 7 | Dokümantasyon + final cila | ⬜ Planlandı |
 
+> **⚠️ İki ayrı sıra var (karıştırma):**
+> - **Geliştirme sırası (development order = bu tablo):** EDA en sona, **Adım 6**'ya bırakıldı çünkü bir *anlatı/cila* adımı; modelleme pipeline'ı (2→3→4→5) önce kuruldu. "Adım 6" bir geliştirme numarasıdır.
+> - **Notebook çalışma/hikaye sırası (execution order):** clone → load → **EDA** → feature → train → eval → conclusion. **EDA, train'den ÖNCE gelir** (model kurmadan önce veriyi tanımak doğru akıştır). Notebook bu sırada kurulu: EDA = hücre 6-7, train = hücre 12.
+
 ---
 
 ### Adım 1 — Proje iskeleti + repo hijyeni
