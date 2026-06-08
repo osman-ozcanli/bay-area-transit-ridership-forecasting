@@ -99,6 +99,7 @@
 - **KAGGLE_GUIDE.md → final:** eski "Adım 4'te eklenecek" placeholder'ları kaldırıldı; gerçek hücre sırası tablosu (EDA eğitimden önce), load-vs-train seçeneği, teyitli beklenen sonuçlar eklendi.
 - **Kozmetik cila (notebook başlıkları):** Markdown başlıklarından geliştirme-numaraları kaldırıldı ("Adım 2/3/4/5", "0." → numarasız akan anlatı başlıkları: Kurulum → Veri Yükleme → Keşifsel Veri Analizi (EDA) → Feature Engineering → Model Eğitimi → Değerlendirme → Sonuç). İçerik/sıra aynı, sadece okunurluk.
 - **Yayın kararı (tek notebook):** İki notebook yerine **tek** `bart_kaggle.ipynb` (senior: duplikasyon/drift'ten kaçın). Eğitim ana akışta kalır; "modeli yükle" yalnızca interaktif-geliştirme için `(Bilgi)` hücresi. Save & Run All = bir kez 70 dk temiz koşu (load-ile-devam yayın akışında YOK, kasıtlı — dürüst uçtan-uca kanıt).
+- **İş değeri (business value) eklendi:** Orijinal brief'teki "officials bu veriyi nasıl kullanır? hangi ek veri?" sorusu cevaplandı — intro'da 1 satır framing (haber ver), Conclusion'da tam blok (kapasite/sefer planlama, personel yönlendirme, yolcu bilgilendirme, sefer optimizasyonu + ek veri: etkinlik/hava/ücret/gecikme). Sınırlar'daki ek-veri tekrarı temizlendi. Brief verbatim eklenmedi (problem+6 soru zaten notebook'ta).
 - **Kazanım:** Tamamlanmış senior portföy projesi. **Kalan opsiyonel:** Kaggle'da bir kez Save & Run All ile yayın notebook'u (commit).
 
 ### ✅ Adım 0 — Yol haritası (2026-06-04)
