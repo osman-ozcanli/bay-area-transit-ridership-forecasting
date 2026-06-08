@@ -1,10 +1,19 @@
 # BART Ridership Project - dependencies
 # Versiyonlar yerel ortamda dogrulanmistir (Python 3.10).
+
+# ---- Core (pipeline + EDA + model) ----
 pandas==2.3.3
 numpy==1.23.3
 scikit-learn==1.7.2
 lightgbm==4.6.0
 holidays==0.98
 PyYAML==6.0.1
-matplotlib>=3.7
-seaborn>=0.12
+matplotlib==3.10.8        # src/ tum grafikler (saf matplotlib, seaborn'suz)
+
+# ---- Dev / test (opsiyonel) ----
+pytest==9.0.3             # tests/ smoke test paketi
+
+# ---- Opsiyonel ----
+# seaborn yalnizca ESKI/arsiv notebook (notebooks/archive/) icin gereklidir;
+# src/ ve final notebook (bart_kaggle.ipynb) seaborn KULLANMAZ.
+# seaborn>=0.12

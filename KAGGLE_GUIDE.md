@@ -1,11 +1,9 @@
 # Kaggle'da Çalıştırma Rehberi (GPU)
 
 Bu proje modüler (`src/`) yapıdadır ve Kaggle'a **GitHub'dan clone** ile taşınır.
-Tek doğruluk kaynağı GitHub reposudur; yerelde `git push` → Kaggle'da yeniden
-`clone` → kod her zaman güncel.
-
-> Durum: Clone + GPU kurulum adımları geçerli. **Eğitim (training) hücreleri
-> Adım 4 tamamlanınca buraya eklenecek.**
+Tek doğruluk kaynağı GitHub reposudur: yerelde `git push` → Kaggle'da yeniden
+`clone` → kod her zaman güncel. Çalıştırılacak hazır notebook:
+[`notebooks/bart_kaggle.ipynb`](notebooks/bart_kaggle.ipynb).
 
 ---
 
@@ -16,48 +14,45 @@ notebook'a attach et. Beklenen yol: `/kaggle/input/bart-ridership/` içinde
 (Dataset slug farklıysa `config.yaml > paths > kaggle > raw_dir` güncellenir.)
 
 ## 1. Notebook ayarları (sağ panel)
-- **Accelerator → GPU** (LightGBM GPU eğitimi için)
 - **Internet → On** (GitHub'dan clone için zorunlu)
+- **Accelerator → GPU** (LightGBM GPU eğitimi için; sadece EDA'yı çalıştıracaksan gerekmez)
 
-## 2. İlk hücre — repoyu clone'la ve import yolunu aç
+## 2. Notebook'u import et ve sırayla çalıştır
+`notebooks/bart_kaggle.ipynb` zaten tüm hücreleri içerir; sıra:
+
+| Hücre | Bölüm | Not |
+|-------|-------|-----|
+| Kurulum | `git clone` + `sys.path` + taze import self-check | Internet On |
+| Veri | `load_dataset` (tam ~13.3M, `use_sample=False`) | — |
+| **EDA** | `run_eda(df, cfg)` → 6 iş sorusu + 7 grafik + yorum | **Eğitimden ÖNCE**, GPU gerekmez |
+| Feature | `build_features` (self-trip drop, lag/rolling, category) | — |
+| Eğitim | `train_model` (temporal split + CV + GPU) → `save_model` | **~65–70 dk** |
+| Değerlendirme | metrik (`results`'tan) + feature importance + grafik | yeniden predict yok |
+
+> Notebook'taki kurulum hücresi `cfg["environment"]="kaggle"` ve `cfg["use_sample"]=False`'u
+> kendisi ayarlar; `config.yaml`'ı elle düzenlemene gerek yok. (Alternatif:
+> `os.environ["BART_ENV"]="kaggle"`.)
+
+## 3. Eğitimi atlamak istersen (modeli yükle)
+Repoda kayıtlı model (`models/bart_lgb_final.txt`) clone ile gelir. 70 dk'lık eğitimi
+tekrarlamadan değerlendirmeye geçmek için, eğitim hücresi yerine:
 ```python
-import os, sys
-
-REPO = "bay-area-transit-ridership-forecasting"
-URL = "https://github.com/osman-ozcanli/bay-area-transit-ridership-forecasting.git"
-
-# Repo yoksa clone'la (hücre tekrar çalıştırılırsa hata vermesin)
-if not os.path.exists(REPO):
-    os.system(f"git clone {URL}")
-
-sys.path.insert(0, f"/kaggle/working/{REPO}")
+import os, lightgbm as lgb
+from src.config import PROJECT_ROOT
+model_path = os.path.join(str(PROJECT_ROOT), "models", cfg["files"]["final_model"])
+model = lgb.Booster(model_file=model_path)
+print("Model yuklendi:", model_path)
 ```
-
-## 3. İkinci hücre — Kaggle ortamını seç + bağımlılıklar
-```python
-# Kaggle ortamini aktif et (tam veri + /kaggle/input path'leri)
-os.environ["BART_ENV"] = "kaggle"   # config.py bunu okuyacak (Adim 4'te eklenecek)
-
-# holidays Kaggle'da kurulu degilse:
-# os.system("pip install holidays -q")
-```
-
-## 4. Üçüncü hücre — veriyi yükle (mevcut, çalışır)
-```python
-from src.data.load import load_dataset
-df = load_dataset()
-print(df.shape, df["DateTime"].min(), "->", df["DateTime"].max())
-```
-
-## 5. Eğitim (Adım 4'te eklenecek)
-> LightGBM `device: gpu` ile temporal split + TimeSeriesSplit CV + model kayıt.
-> Somut hücreler ve beklenen GPU süresi Adım 4 bittiğinde buraya yazılacak.
+> Geliştirirken bunu kullan (hızlı). Final portföy sürümü için bir kez **Save & Run All
+> (Commit)** ile eğitimi gerçekten çalıştır → yayınlanan sürüm tüm çıktıları taşır.
 
 ---
 
+## Beklenen sonuçlar (tam veri, teyitli)
+- Holdout 2017: **MAE 3.17 / RMSE 8.48 / R² 0.937**, CV MAE **3.18 ± 0.09**
+- EDA: busiest **EMBR**, least **WSPR→SBRN**, en yoğun gün **Çarşamba**,
+  gece **%1.2**, Berkeley→SF en iyi saat **04:00**
+
 ## Notlar
-- `config.yaml` repo içinde `environment: local` ile gelir; Kaggle'da
-  `BART_ENV=kaggle` override'ı ile değiştirilecek (bu override Adım 4'te
-  `config.py`'ye eklenecek — şimdilik gerekiyorsa config.yaml elle `kaggle`
-  yapılır).
 - Repo herkese açıksa clone için ek kimlik doğrulama gerekmez.
+- `holidays` Kaggle'da kurulu değilse: `os.system("pip install holidays -q")`.

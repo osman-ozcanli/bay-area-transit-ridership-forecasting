@@ -8,8 +8,8 @@
 
 ## ▶️ DEVAM NOKTASI (yeni session burayı okusun)
 
-- **Tamamlanan:** Adım 0, 1, 2, 3, 4, 5 ✅; **Adım 6 yerel kod + notebook + Kaggle EDA teyidi ✅**
-- **Şu an:** **Adım 6 tamamlandı.** `src/eda.py` + `bart_kaggle.ipynb` (19 hücre, final anlatı). Kaggle tam-veri EDA çalıştırıldı, sonuçlar teyit edildi (aşağıda). **Sıradaki: Adım 7 (dokümantasyon + final cila).**
+- **Tamamlanan:** Adım 0–7 ✅ — **PROJE TAMAMLANDI** (tüm yol haritası kapandı).
+- **Şu an:** Adım 7 (dokümantasyon + final cila) bitti. README portföy seviyesinde (sonuçlar+EDA+çalıştırma), requirements pinli, docstring/type-hint %100, `tests/` 10 smoke test (yerelde ~32s yeşil), KAGGLE_GUIDE güncel. **Kalan tek opsiyonel iş:** final portföy notebook'unu Kaggle'da bir kez **Save & Run All (Commit)** ile yayınlamak (istenirse).
 - **Adım 6 yapı kararı:** **TEK notebook, her şey dahil** (EDA + eğitim + değerlendirme + conclusion, tek hikaye). Eğitim dürüst ana akış olarak kalır; "her çalıştırmada 70dk" sorunu yok çünkü Kaggle'da **bir kez "Save & Run All (Commit)"** ile çalıştırılır → yayınlanmış sürüm tüm çıktıları taşır, açan kişi yeniden çalıştırmaz.
 - **Adım 6 PLANI (kullanıcı devam edince uygulanacak):**
   1. `src/eda.py` — 6 iş sorusu fonksiyonları: en yoğun istasyon, en az/çok popüler rota, en yoğun gün, gece (LateNight) yolcuları, popüler rotalar, Berkeley→SF en iyi saat. Modüler + yerel doğrulama.
@@ -51,7 +51,7 @@
 | 4 | Temporal split + model eğitim modülü (`src/models`) | ✅ Tamamlandı |
 | 5 | Değerlendirme + yorumlama | ✅ Tamamlandı |
 | 6 | Notebook'u anlatı (narrative) katmanına dönüştür | ✅ Tamamlandı (Kaggle EDA teyitli) |
-| 7 | Dokümantasyon + final cila | ⬜ Planlandı |
+| 7 | Dokümantasyon + final cila | ✅ Tamamlandı |
 
 > **⚠️ İki ayrı sıra var (karıştırma):**
 > - **Geliştirme sırası (development order = bu tablo):** EDA en sona, **Adım 6**'ya bırakıldı çünkü bir *anlatı/cila* adımı; modelleme pipeline'ı (2→3→4→5) önce kuruldu. "Adım 6" bir geliştirme numarasıdır.
@@ -90,6 +90,14 @@
 ---
 
 ## İlerleme Günlüğü
+
+### ✅ Adım 7 — Dokümantasyon + final cila (2026-06-08)
+- **README.md → portföy seviyesi:** 🎯 Sonuçlar (MAE 3.17 / RMSE 8.48 / R² 0.937, CV 3.18±0.09, reproducibility), feature importance özeti (lag_1 %63), 📊 EDA 6 soru + cevapları (EMBR / WSPR→SBRN / Çarşamba / %1.2 / commuter rota karışımı / 04:00), güncel proje ağacı (`src/eda.py`, `notebooks/archive/`), moduler pipeline komutları (`python -m src.eda|models.train|models.evaluate`), test bölümü, metodolojik notlar. İki yazım hatası düzeltildi.
+- **requirements.txt → pin temizliği:** matplotlib `==3.10.8` pinlendi; **seaborn opsiyonele alındı** (sadece arşiv notebook kullanıyor, `src/` saf matplotlib — doğrulandı); `pytest==9.0.3` dev bağımlılığı eklendi.
+- **Docstring/type-hint denetimi:** `src/` 12 dosya otomatik tarandı → **docstring %100, return-hint %100** eksik yok.
+- **`tests/` smoke test paketi (yeni):** `conftest.py` (session fixtures: cfg/raw_df/feat_df), `test_config.py` (3), `test_features.py` (4: self-trip drop, dist_km>0, category dtype, **leakage-safe lag**), `test_eda.py` (3: 6 soru + figür üretimi, sıralama, Berkeley saat aralığı). **10/10 yeşil, ~32s, tamamen yerel** (Kaggle/eğitim gerektirmez).
+- **KAGGLE_GUIDE.md → final:** eski "Adım 4'te eklenecek" placeholder'ları kaldırıldı; gerçek hücre sırası tablosu (EDA eğitimden önce), load-vs-train seçeneği, teyitli beklenen sonuçlar eklendi.
+- **Kazanım:** Tamamlanmış senior portföy projesi. **Kalan opsiyonel:** Kaggle'da bir kez Save & Run All ile yayın notebook'u (commit).
 
 ### ✅ Adım 0 — Yol haritası (2026-06-04)
 - Notebook ve analiz incelendi, analizdeki tüm kritik tespitler kod üzerinde **doğrulandı**.
