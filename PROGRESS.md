@@ -97,6 +97,8 @@
 - **Docstring/type-hint denetimi:** `src/` 12 dosya otomatik tarandı → **docstring %100, return-hint %100** eksik yok.
 - **`tests/` smoke test paketi (yeni):** `conftest.py` (session fixtures: cfg/raw_df/feat_df), `test_config.py` (3), `test_features.py` (4: self-trip drop, dist_km>0, category dtype, **leakage-safe lag**), `test_eda.py` (3: 6 soru + figür üretimi, sıralama, Berkeley saat aralığı). **10/10 yeşil, ~32s, tamamen yerel** (Kaggle/eğitim gerektirmez).
 - **KAGGLE_GUIDE.md → final:** eski "Adım 4'te eklenecek" placeholder'ları kaldırıldı; gerçek hücre sırası tablosu (EDA eğitimden önce), load-vs-train seçeneği, teyitli beklenen sonuçlar eklendi.
+- **Kozmetik cila (notebook başlıkları):** Markdown başlıklarından geliştirme-numaraları kaldırıldı ("Adım 2/3/4/5", "0." → numarasız akan anlatı başlıkları: Kurulum → Veri Yükleme → Keşifsel Veri Analizi (EDA) → Feature Engineering → Model Eğitimi → Değerlendirme → Sonuç). İçerik/sıra aynı, sadece okunurluk.
+- **Yayın kararı (tek notebook):** İki notebook yerine **tek** `bart_kaggle.ipynb` (senior: duplikasyon/drift'ten kaçın). Eğitim ana akışta kalır; "modeli yükle" yalnızca interaktif-geliştirme için `(Bilgi)` hücresi. Save & Run All = bir kez 70 dk temiz koşu (load-ile-devam yayın akışında YOK, kasıtlı — dürüst uçtan-uca kanıt).
 - **Kazanım:** Tamamlanmış senior portföy projesi. **Kalan opsiyonel:** Kaggle'da bir kez Save & Run All ile yayın notebook'u (commit).
 
 ### ✅ Adım 0 — Yol haritası (2026-06-04)
